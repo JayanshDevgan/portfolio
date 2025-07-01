@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jayansh Devgan - Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root[data-theme='dark'] {
+            --bg: #0e0e0e;
+            --fg: #f0f0f0;
+            --accent: #9d4edd;
+            --secondary: #1a1a1a;
+            --highlight: #f72585;
+        }
+
+        :root[data-theme='light'] {
+            --bg: #f9f6f0;
+            --fg: #1c1c1c;
+            --accent: #f28482;
+            --secondary: #fffaf0;
+            --highlight: #ffb4a2;
+        }
+
+        html {
+            overflow: scroll;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar {
+            width: 0;
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #FF0000;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--fg);
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 1s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .glow {
+            text-shadow: 0 0 8px var(--accent);
+        }
+
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background-color: var(--bg);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Page Base Styles */
+        .page {
+            width: 90vw;
+            height: 85vh;
+            position: absolute;
+            top: 7.5vh;
+            left: 5vw;
+            background: var(--secondary);
+            border-radius: 1rem;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+            backface-visibility: hidden;
+            transform-style: preserve-3d;
+            transition: transform 0.8s ease;
+            overflow: hidden;
+        }
+
+        /* Flip Mechanics */
+        .page.front {
+            transform: rotateY(0deg);
+            z-index: 2;
+        }
+
+        .page.back {
+            transform: rotateY(180deg);
+            z-index: 1;
+        }
+
+        .page-wrapper {
+            position: relative;
+            perspective: 2000px;
+        }
+
+        .page-wrapper.flipped .front {
+            transform: rotateY(180deg);
+            z-index: 1;
+        }
+
+        .page-wrapper.flipped .back {
+            transform: rotateY(0deg);
+            z-index: 2;
+        }
+
+        .page-inner {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        .page.image-only img {
+            height: 100%;
+            width: 200%;
+            max-width: 100vw;
+            box-sizing: border-box;
+            object-fit: contain;
+            display: block;
+        }
+
+        .page.image-content .page-inner {
+            flex-direction: row;
+            padding: 0;
+        }
+
+        .image-half,
+        .text-half,
+        .video-half {
+            width: 50%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-half img,
+        .video-half video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .text-half {
+            padding: 2rem;
+            font-size: clamp(1rem, 2.5vw, 1.4rem);
+            line-height: 1.6;
+            text-align: justify;
+            color: var(--fg);
+        }
+
+        /* Fix for Text-only page */
+        .page:not(.image-only):not(.image-content) .page-inner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        /* Navigation Arrows */
+        .nav-arrow,
+        #prevBtn,
+        #nextBtn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            color: white;
+            border: none;
+            background: none;
+            cursor: pointer;
+            mix-blend-mode: difference;
+            z-index: 10;
+            opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+
+        #prevBtn {
+            left: 2vw;
+        }
+
+        #nextBtn {
+            right: 2vw;
+        }
+
+        #prevBtn:hover,
+        #nextBtn:hover,
+        .nav-arrow:hover {
+            opacity: 1;
+        }
+
+        #homeBtn {
+            position: absolute;
+            top: 2vh;
+            left: 2vw;
+            font-size: clamp(0.9rem, 2vw, 1.2rem);
+            color: white;
+            background: none;
+            cursor: pointer;
+            opacity: 0.7;
+            z-index: 1000;
+            margin-top: 1rem;
+            mix-blend-mode: difference;
+        }
+
+        #homeBtn:hover {
+            opacity: 1;
+        }
+
+        .btn-view,
+        .btn-download {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: clamp(0.9rem, 2vw, 1.2rem);
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            color: var(--fg);
+            background-color: var(--accent);
+        }
+
+        .btn-view {
+            background-color: var(--highlight);
+        }
+
+        .btn-download {
+            background-color: var(--accent);
+        }
+
+        .btn-view:hover,
+        .btn-download:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+
+        .btn-view:focus,
+        .btn-download:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .page.image-content .page-inner {
+                flex-direction: column;
+            }
+
+            .image-half,
+            .text-half,
+            .video-half {
+                width: 100%;
+                height: 50%;
+            }
+
+            #prevBtn {
+                left: 4vw;
+            }
+
+            #nextBtn {
+                right: 4vw;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page {
+                width: 95vw;
+                height: 90vh;
+                left: 2.5vw;
+                top: 5vh;
+            }
+
+            .page-content {
+                font-size: 1rem;
+                padding: 1rem;
+            }
+
+            #homeBtn {
+                font-size: 1rem;
+                z-index: 1000;
+            }
+
+            .video-half {
+                width: 100%;
+                height: 100%;
+            }
+
+            .page-inner.stacked .image-half,
+            .page-inner.stacked .video-half,
+            .page-inner.stacked .text-half {
+                width: 100%;
+                height: 33.33%;
+            }
+        }
+    </style>
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const mainBody = document.body;
+            const projectLinks = document.querySelectorAll('[data-link]');
+
+            document.getElementById("mailid").addEventListener("click", function () {
+                const email = document.getElementById("mailid").textContent;
+                navigator.clipboard.writeText(email).then(() => {
+                    alert("Email copied to clipboard: " + email);
+                }).catch(err => {
+                    console.error('Failed to copy email: ', err);
+                });
+                e.preventDefault();
+            });
+
+            const projectPages = {
+                "projects/pnwas": [
+                    { text: "POST NARRATIVE WORLD ACTIVATION SYSTEM." },
+                    { imageOnly: true, image: "img/PANWAS/1.png" },
+                    { imageOnly: true, image: "img/PANWAS/2.png" },
+                    { imageOnly: true, image: "img/PANWAS/3.png" },
+                    { imageOnly: true, image: "img/PANWAS/4.png" },
+                ],
+                "projects/defenders-domain": [
+                    {
+                        text: "Defender’s Domain is a retro-inspired CLI game where you stop waves of ASCII enemies from reaching your portal. You’ll deploy timed bombs and strategize under pressure using only the terminal interface."
+                    },
+                    {
+                        imageOnly: true,
+                        image: "img/DD/Game_ss_1.png"
+                    },
+                    {
+                        image: "img/DD/Game_ss_2.png",
+                        text: "Players face increasing difficulty with enemy patterns evolving over time. Bomb placement becomes crucial."
+                    },
+                    {
+                        image: "img/DD/Game_ss_3.png",
+                        text: "The game gives a nostalgic, hacker-style interface using ASCII visuals and typewriter-style updates for immersion."
+                    },
+                    {
+                        mixed: true,
+                        image: "img/DD/Game_ss_4.png",
+                    },
+                    {
+                        image: "img/DD/Game_ss_5.png",
+                        text: "Level and score tracking are integrated in the CLI. Players receive real-time feedback on performance."
+                    },
+                    {
+                        image: "img/DD/Game_ss_6.png",
+                        text: "Built using Pure C++ only dependency you have is your OS, this project showcases mastery in game logic, state management, and UI/UX without GUI."
+                    }
+                ],
+                "projects/my-dads-a-hero": [
+                    { text: "My Dad's a Hero: Armageddon is a linear story based video game which focuses on the life of a well renowned criminal/gangster and his relationship with his daughter especially after his divorce. Later in the story he fights his own inner demons that he must overcome to earn his image back in the eyes of her daughter. This provides the player with the perfect blend between action and deep emotions which makes the storyline one of its kind." },
+                    {
+                        text: "This is a glimpse into a large-scale game project currently under development. As the Game Designer and Assistant Programmer, I'm actively contributing to core mechanics like player control, traversal, and combat systems. While final visuals are pending, the core gameplay systems are functional and evolving rapidly."
+                    },
+                    {
+                        image: "/img/MDH/shoot.jpg", text: "The shooting system is built with modular design, featuring customizable fire modes, hit detection, recoil feedback, and procedural crosshair adjustment."
+                    },
+                    {
+                        image: "/img/MDH/cc.jpg", text: "Character movement supports walking, sprinting, crouching, and sliding—with camera follow and collision layers implemented. Tuning for responsiveness and animation blending is ongoing."
+                    },
+
+                    {
+                        video: "video/V.mkv",
+                        text: "Here's a demo with early test models."
+                    }],
+                "projects/bloodlight": [
+                    { text: "<b>Bloodlight (Working Title)</b>" },
+                    {
+                        text: `Title: Bloodlight (Working Title)<br><br>
+Genre: First-Person Hero Shooter with Tactical and Parkour<br>
+Platform: PC<br>
+Engine: Unreal Engine 5<br>
+Mode: 6v6 Competitive Multiplayer (PvP)<br>
+Art Style: Stylized Gothic Fantasy<br>
+Target Audience: Competitive FPS players, ages 16–35` },
+                    {
+                        text: `High Concept<br><br>
+Bloodlight is a fast-paced, class-based 6v6 multiplayer FPS where two rival vampire factions battle across dark, stylized maps to plant or defend a sacred “Light Source”. Every vampire has unique powers—two standard abilities, one signature, one ultimate, and one always-active passive. Movement and positioning are key, with advanced parkour mechanics enabling wall-running, dashing, and climbing.<br>
+The objective: win 9 rounds. In the event of an 8–8 tie, the game goes into overtime. If the tie persists, it ends in a 1v1 sudden death showdown.
+`},
+                    {
+                        text: `Core Gameplay Loop<br><br>
+1. Character Select & Loadout<br>
+2. Buy/Prep Phase – 20 seconds<br>
+3. Combat Phase – Players use guns, vampire abilities, and mobility<br>
+4. Objective – Attackers plant the Light Source / Defenders stop or defuse it<br>
+5. Round End & Evaluation
+`},
+                    {
+                        text: `Game Rules & Victory Conditions<br><br>
+Rounds: First to 9 wins<br>
+Overtime: At 8–8, win 2 consecutive rounds. if tie again then 1v1 face off.<br>
+Sudden Death: If still tied, a 1v1 battle decides the winner<br>
+Match Time: Avg 25–35 mins`},
+                    {
+                        text: ` Controls & Movement<br><br>
+Standard FPS controls (WASD / Mouse)<br>
+Advanced Parkour Mechanics:<br>
+--> Wall-running<br>
+--> Mantling<br>
+--> Dashing (8-way)<br>
+--> Sliding<br>
+--> Double-jump
+`},
+                    {
+                        table: [
+                            ["Character Classes<br><br> Each team is made of 5 unique vampire classes:"],
+                            ["Class Archetypes"],
+                            ["", "Class", "HP", "Protection", "Role"],
+                            ["", "Dominator", "100", "150", "Aggressive Fighter"],
+                            ["", "Resasor", "80", "150", "Sacrificial Utility"],
+                            ["", "Lover", "80", "150", "Healer"],
+                            ["", "Leader", "100", "150", "Tactical Support/Commander"],
+                            ["", "Initiator", "100", "150", "Disruptor / Space-Maker"],
+                            ["", "Assassin", "60", "150", "Stealth Flanker"]
+                        ],
+                    },
+                    { text: `Each character has: <BR> 2 Abilities (Q/E) <BR> 1 Signature (Shift) <BR> 1 Ultimate (X) <BR> 1 Passive (Always active)"],<br>Each ability has a cooldown; ultimate charges over time and actions.` },
+                    { text: `Characters / Character Classes` },
+                    { image: "./gdd_images/L_Alaric.png", text: "Leader" },
+                    { image: './gdd_images/I_Dorian.png', text: "Initiator" },
+                    { image: "./gdd_images/A_Nyx.png", text: "Assassin" },
+                    { text: "Rest of the Character with Character Selection Screen reference" },
+                    { imageOnly: true, image: './gdd_images/d_magnus.png' },
+                    { imageOnly: true, image: "./gdd_images/r_Viktor.png" },
+                    { imageOnly: true, image: './gdd_images/l_Selene.png' },
+                    { imageOnly: true, image: "./gdd_images/l_Lilith.png" },
+                    { text: `Maps (Section Placeholder)[UNDER PROGRESS]<br><br>` },
+                    {
+                        text: `Art & Visual Direction<br><br>Stylized yet gritty Gothic world<br>
+Blood-red, deep purples, moonlight lighting<br>
+Glowing ability FX (change with skins)<br>
+`},
+                    {
+                        text: `Monetization
+<br><br>Free to Play<br><br>
+Cosmetic Purchases Only:<br>
+Character Skins (change ability particles and FX)<br>
+Weapon Skins<br>
+Kill Animations, Emotes, Voice Lines<br>
+Limited edition seasonal skins and event passes<br><br>
+Battle Pass with XP-based unlocks`},
+                    {
+                        text: `Technical Details<br><br>Engine: Unreal Engine 5<br>
+Multiplayer: Dedicated servers
+Anti-Cheat: Kernel-level protection planned<br>`},
+                    {
+                        text: `Future Expansion<br><br>Seasonal content<br>
+Leaderboards and ranked mode<br>
+New vampire / new classes<br>
+Lore-based PvE raids or short missions
+`},
+                    {
+                        text: `Prepared by: Jayansh Devgan<br>
+Date: June 2025<br>
+Document Version: v1.0
+`},
+                ],
+                "projects/ahole": [
+                    { text: "While the core design documentation remains confidential under NDA, here are some exclusive behind-the-scenes images showcasing under progress prototype." },
+                    {
+                        text: "This is a procedurally generated action-puzzle game where your goal is to reach the black hole. Every map, enemy position, trap, and even player spawn point is dynamically generated to ensure a unique experience in each run. With a planned 250 handcrafted and algorithmically generated levels, this game is designed to challenge reflexes, adaptability, and strategy. Below are development snapshots showcasing core systems(under development) and level generation in action."
+                    },
+                    {
+                        imageOnly: "img/AH/1.png",
+                    },
+                    {
+                        imageOnly: "img/AH/2.png",
+                    },
+                    {
+                        imageOnly: "img/AH/3.png",
+                    },
+                    {
+                        image: "img/AH/rough.png",
+                        text: "Early sketch illustrating the core gameplay loop: enter the map, adapt to random layouts, survive dynamic traps, and reach the black hole. This foundation evolved into our procedural generation pipeline."
+                    },
+                    { videoOnly: "video/AHole1.mp4" },
+                    { videoOnly: "video/AHole2.mp4" }
+                ],
+                "projects/ahole-gdd": [
+                    { text: "The Game Design Document (GDD) and specific gameplay mechanics for this project are protected under a Non-Disclosure Agreement (NDA), and thus cannot be shared publicly. However, select behind-the-scenes visuals are available to offer insight into the development process." },
+                ],
+                "projects/playboy-sins-of-the-city": [
+                    { "text": "Permitted Glimpse of the Story - Content is under NDA." },
+                    {
+                        "text": `Camera is facing towards John sitting on a chair handcuffed looking down with no expressions.<br>
+Voice F :- if you get in here once you are here forever you can't escape the circle ⭕. <br><br>
+Camera gets on top view as the word the circles comes and a red circle will form around the table.<br><br>
+Scene cuts to a lot of people kissing each other. There are gay, lesbian, straight, bisexual all kissing and touching each other's boobs and ass<br>
+Sound of horn comes like race has been started and you have to race in the whole city and story will continue based on the outcome of the race if you won you will get 50 grand if lost then, the one who wins will fuck your gf Oliva.
+`},
+                    {
+                        "text": `If you lose:- so now I will fuck your girl friend and put his hand on her ass and gets lean to kiss her but you punch on his face and run with her and they are now chasing you and police also comes as you gets in the main city area.<br><br>
+Now you get into the forest leaving their group behind and after getting in a safe zone john roughly stops the car. And now they are low on oxygen and see in each other's eyes and start to have sex.<br><br>Camera slowly gets out of the car and drops down towards the tiers and instantly changes to a rich man named Ronald berg.
+`},
+                    {
+                        "text": `Looking out of the window and see 2 of those are giving cash to the police and police just passed by them to get back to petrol.
+He says looking in the camera breaking 4th wall that “The system's f**ked too. I will do something to take care of these rodents. I'll make Jesus proud by showing there's still some good left in the world.”`}
+                ],
+
+                "projects/merry-christmas": [
+                    {
+                        mixed: true,
+                        text: "Content Not Suitable for All Audiences <BR><-- DEMO ",
+                        video: "./video/mc.mp4",
+                        layout: "side-by-side",
+                        muted: true,
+                        controls: false,
+                    }
+                ],
+                "projects/level-designs": [
+                    {
+                        text: "Level Design Showcase: From concept to grey boxing. This section documents the entire development journey of a 3D level from rough sketching, early blockouts, to collision fixes, navigation mesh setup, and gameplay ready."
+                    },
+                    {
+                        imageOnly: true,
+                        image: "img/LD/rough.png"
+                    },
+                    {
+                        image: "img/LD/1.png",
+                        text: "Initial greybox layout to explore basic geometry and spatial flow of the environment."
+                    },
+                    {
+                        image: "img/LD/2.png",
+                        text: "Expanded on layout with added height variation and exploratory routes for vertical gameplay."
+                    },
+                    {
+                        image: "img/LD/3.png",
+                        text: "Added environmental assets and early lighting setup to test visual composition."
+                    },
+                    {
+                        image: "img/LD/4.png",
+                        text: "Tested level flow with dummy player movement; identified areas requiring rework."
+                    },
+                    {
+                        image: "img/LD/5.png",
+                        text: "Refined gameplay space, optimizing choke points and enemy spawn zones."
+                    },
+                    {
+                        image: "img/LD/7.png",
+                        text: "Collision problems identified with terrain clipping and physics inconsistency."
+                    },
+                    {
+                        image: "img/LD/6.png",
+                        text: "Collision fixes applied, smoothing out player movement and eliminating stuck spots."
+                    },
+                    {
+                        image: "img/LD/9.png",
+                        text: "Implemented navigation mesh for AI behavior, enabling intelligent pathfinding and dynamic cover use."
+                    },
+                    {
+                        image: "img/LD/10.png",
+                        text: "Final polish pass completed: lighting, materials, props, and gameplay balancing done."
+                    },
+                    {
+                        image: "img/LD/11.png",
+                        text: "Final level presented with multiple camera perspectives: Top-down, Front, and Right view for better spatial clarity."
+                    }
+                ]
+            };
+
+            function renderMediaContent(container, content) {
+                const layout = content.layout || 'side-by-side'; // "side-by-side" or "stacked"
+                const isStacked = layout === 'stacked';
+
+                container.classList.add('image-content');
+                container.innerHTML = `
+      <div class="page-inner ${isStacked ? 'stacked' : ''}">
+        ${content.image ? `<div class="image-half"><img src="${content.image}" alt="Image" /></div>` : ''}
+        ${content.video ? `<div class="video-half"><video controls><source src="${content.video}" type="video/mp4"></video></div>` : ''}
+        ${content.text ? `<div class="text-half">${content.text}</div>` : ''}
+      </div>
+    `;
+            }
+
+            function loadProject(link) {
+                localStorage.setItem('activeProject', link);
+                const contents = projectPages[link] || ["Page 1: Coming soon...", "Page 2: Stay tuned!"];
+                let currentIndex = 0;
+
+                mainBody.innerHTML = `
+      <div class="page-wrapper">
+        <div class="page front"></div>
+        <div class="page back"></div>
+      </div>
+    `;
+
+                const wrapper = document.querySelector('.page-wrapper');
+                const front = wrapper.querySelector('.front');
+                const back = wrapper.querySelector('.back');
+
+                function render() {
+                    const current = contents[currentIndex];
+                    const next = contents[currentIndex + 1];
+
+                    front.className = 'page front';
+                    back.className = 'page back';
+
+                    function renderContent(container, data) {
+                        const layout = data.layout || 'side-by-side';
+                        const isStacked = layout === 'stacked';
+                        const isMuted = data.muted ? 'muted' : '';
+                        const noControls = 'controls' in data ? data.controls !== false : false;
+
+                        container.classList.remove('image-only', 'image-content');
+                        container.innerHTML = '';
+
+                        // VIDEO ONLY
+                        if (data.videoOnly) {
+                            container.innerHTML = `
+            <div class="page-inner">
+                <video autoplay loop playsinline ${isMuted} ${!noControls ? '' : 'controls'} style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
+                    <source src="${data.video}" type="video/mp4">
+                </video>
+            </div>
+        `;
+                        }
+                        // IMAGE ONLY
+                        else if (data.imageOnly) {
+                            container.classList.add('image-only');
+                            container.innerHTML = `
+            <div class="page-inner">
+                <img src="${data.image}" alt="Image Only Page" />
+            </div>
+        `;
+                        }
+                        if (data.table) {
+                            const mainHeading = data.table[0]?.[0] || '';
+                            const headers = data.table[1] || [];
+                            const rows = data.table.slice(2);
+                            container.innerHTML = `
+            <div class="page-inner">
+                <h2>${mainHeading}</h2>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            ${headers.map(h => `<th style="border: 1px solid #ccc; padding: 8px;">${h}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rows.map(row => `
+                            <tr>
+                                ${row.map(cell => `<td style="border: 1px solid #ccc; padding: 8px;">${cell}</td>`).join('')}
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+                        }
+
+                        // MIXED MEDIA OR SINGLE TYPE WITH TEXT
+                        else if (data.image || data.video || data.text) {
+                            container.classList.add('image-content');
+                            container.innerHTML = `
+            <div class="page-inner ${isStacked ? 'stacked' : ''}">
+                ${data.image ? `<div class="image-half"><img src="${data.image}" alt="Image" /></div>` : ''}
+                ${data.video ? `<div class="video-half"><video autoplay loop playsinline ${isMuted} ${!noControls ? '' : 'controls'} style="pointer-events: none;"><source src="${data.video}" type="video/mp4"></video></div>` : ''}
+                ${data.text ? `<div class="text-half">${data.text}</div>` : ''}
+            </div>
+        `;
+                        }
+                        // TEXT ONLY
+                        else {
+                            container.innerHTML = `
+        <div class="page-inner">
+            <div class="w-full max-w-3xl text-justify">
+                    <p class="text-lg mb-4">${data.text || ''}</p>
+                    </div>
+        </div>
+    `;
+                        }
+
+                    }
+
+                    // FRONT + BACK RENDERING
+                    renderContent(front, current);
+                    if (next) {
+                        renderContent(back, next);
+                    } else {
+                        back.innerHTML = '';
+                    }
+
+                    // BUTTONS
+                    mainBody.querySelectorAll('.page').forEach((el) => {
+                        const container = document.createElement('div');
+                        container.className = 'controls-embedded';
+
+                        container.innerHTML += `<button id="homeBtn" class="home-arrow">⬅ Home</button>`;
+                        if (currentIndex > 0) {
+                            container.innerHTML += `<button id="prevBtn" class="nav-arrow" style="left:2vw;">⬅</button>`;
+                        }
+                        if (currentIndex < contents.length - 1) {
+                            container.innerHTML += `<button id="nextBtn" class="nav-arrow" style="right:2vw;">➡</button>`;
+                        }
+
+                        el.appendChild(container);
+                    });
+
+                    // EVENTS
+                    document.getElementById('homeBtn')?.addEventListener('click', () => {
+                        localStorage.setItem('scrollToProjects', 'true');
+                        localStorage.removeItem('activeProject');
+                        location.reload();
+                    });
+
+
+                    document.getElementById('nextBtn')?.addEventListener('click', () => {
+                        if (currentIndex < contents.length - 1) {
+                            wrapper.classList.add('flipped');
+                            setTimeout(() => {
+                                currentIndex++;
+                                render();
+                                wrapper.classList.remove('flipped');
+                            }, 250);
+                        }
+                    });
+
+                    document.getElementById('prevBtn')?.addEventListener('click', () => {
+                        if (currentIndex > 0) {
+                            wrapper.classList.add('flipped');
+                            setTimeout(() => {
+                                currentIndex--;
+                                render();
+                                wrapper.classList.remove('flipped');
+                            }, 250);
+                        }
+                    });
+                }
+
+                render();
+            }
+
+            // Auto-load from saved
+            const savedProject = localStorage.getItem('activeProject');
+            if (savedProject) loadProject(savedProject);
+
+            // Hook up card links
+            projectLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const project = e.currentTarget.getAttribute('data-link');
+                    loadProject(project);
+                });
+            });
+        });
+    </script>
+
+
+
+
+
+</head>
+
+<body class="transition-colors duration-700 tracking-wide">
+    <div id="app"></div>
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-[var(--secondary)] shadow-md">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold glow">Jayansh Devgan</h1>
+            <nav class="space-x-4 hidden md:block">
+                <a href="#about" class="hover:text-[var(--accent)]">About</a>
+                <a href="#workflow" class="hover:text-[var(--accent)]">Workflow</a>
+                <a href="#skills" class="hover:text-[var(--accent)]">Skills</a>
+                <a href="#projects" class="hover:text-[var(--accent)]" id="pclick">Projects</a>
+                <a href="#github" class="hover:text-[var(--accent)]">GitHub</a>
+                <a href="#contact" class="hover:text-[var(--accent)]">Contact</a>
+            </nav>
+            <button onclick="toggleTheme()"
+                class="ml-4 bg-[var(--accent)] text-white px-4 py-1 rounded hover:opacity-80 transition">Toggle
+                Theme</button>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="text-center py-24 fade-in">
+        <h2 class="text-5xl font-bold mb-6">Design meets Dev.<br>Emotions meet Mechanics.</h2>
+        <p class="max-w-2xl mx-auto text-xl text-[var(--accent)] italic">Inspired by the duality of <em>The Last of
+                Us</em> — brutal and beautiful.</p>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="py-20 px-6">
+        <div class="max-w-4xl mx-auto fade-in">
+            <h3 class="text-3xl font-bold text-center mb-8">About Me</h3>
+            <div class="flex flex-col md:flex-row items-center md:items-start md:space-x-8">
+                <img src="img/pic.jpg" alt="Passport Photo"
+                    class="w-64 h-64 rounded-full object-cover shadow-md mb-6 md:mb-0">
+                <div class="text-justify">
+                    <p class="text-lg mb-4">A creator of heartfelt chaos. A coder of structured emotion. I'm building
+                        games that the soul remembers.</p>
+                    <p class="text-lg mb-4">Having stepped away from a formal Computer Science degree, I now dedicate my
+                        full energy to game design. I spend my nights prototyping dream worlds and my days designing
+                        gameplay systems, mechanics, and stories that hit hard. From dark narrative horror to expansive
+                        open-world adventures, my goal is to build experiences that last beyond the screen.</p>
+                    <p class="text-lg">I'm a game designer in the making — determined to one day lead my own studio, but
+                        for now, I’m learning, experimenting, and pushing boundaries in Unreal, Unity, and beyond.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Workflow -->
+    <section id="workflow" class="py-20 px-6 bg-[var(--secondary)] fade-in">
+        <div class="max-w-5xl mx-auto">
+            <h3 class="text-3xl font-bold mb-10 text-center">Creative Workflow</h3>
+            <ol class="space-y-8 text-lg">
+                <li><span class="text-[var(--accent)] font-semibold">IDEA:</span> Everything begins with a an emotion.
+                </li>
+                <li><span class="text-[var(--accent)] font-semibold">Characters:</span> Who these character are
+                    connected with perticular emotion.</li>
+                <li><span class="text-[var(--accent)] font-semibold">Message:</span> What message i want to give to the
+                    world from my story.</li>
+                <li><span class="text-[var(--accent)] font-semibold">World:</span> A world that breathes the same air as
+                    the characters.</li>
+                <li><span class="text-[var(--accent)] font-semibold">Story:</span>
+                    <ul class="ml-6 list-disc text-base">
+                        <li><strong>Why I Write:</strong> To reflect pain, hope, and healing.</li>
+                        <li><strong>Who’s In It:</strong> A deeply flawed soul with purpose.</li>
+                        <li><strong>Where:</strong> Settings that mirror emotions.</li>
+                        <li><strong>Structure:</strong> Plot --> Start --> End. Then flood it with emotion.</li>
+                    </ul>
+                </li>
+                <li><span class="text-[var(--accent)] font-semibold">Emotions:</span> Not fluff. They’re the gameplay.
+                    Fear. Grief. Hope. Love. All real.</li>
+                <li><span class="text-[var(--accent)] font-semibold">Mechanics:</span> It depends upon the story.
+                    Realism is what is chase. RESEARCH RESEARCH RESEARCH JUST DON'T MAKE IT LOOK REAL MAKE IT FEEL REAL!
+                </li>
+                <li><span class="text-[var(--accent)] font-semibold">Final Steps:</span> First, the story layout. Then
+                    the Game Design Document (GDD). Lastly, a thorough story outline that includes all the subtleties.
+                    We don't begin developing the game until after that.</li>
+                <li><span class="text-[var(--accent)] font-semibold">The Goal:</span> To create a hauntingly beautiful
+                    experience that lingers long after the game is over.</li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- Skills -->
+    <section id="skills" class="py-20 px-6 fade-in">
+        <div class="max-w-5xl mx-auto text-center">
+            <h3 class="text-3xl font-bold mb-6">Tools</h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 text-[var(--accent)]">
+                <div class="card flex flex-col items-center">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/unrealengine/unrealengine-original.svg"
+                        alt="Unreal Engine" class="w-10 h-10 mb-2 dark:invert">
+                    Unreal Engine
+                </div>
+                <div class="card flex flex-col items-center">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/unity/unity-original.svg" alt="Unity"
+                        class="w-10 h-10 mb-2">
+                    Unity
+                </div>
+                <div class="card flex flex-col items-center">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/photoshop/photoshop-original.svg"
+                        alt="Adobe Photoshop" class="w-10 h-10 mb-2">
+                    Adobe Photoshop
+                </div>
+                <div class="card flex flex-col items-center">
+                    <img src="img/miro.jpeg" alt="Miro" class="w-10 h-10 mb-2">
+                    Miro
+                </div>
+                <div class="card flex flex-col items-center">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/01/Google_Docs_logo_%282014-2020%29.svg"
+                        alt="Google Docs" class="w-10 h-10 mb-2">
+                    Google Docs
+                </div>
+                <div class="card flex flex-col items-center">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="Git"
+                        class="w-10 h-10 mb-2">
+                    Git & GitHub
+                </div>
+                <div class="card flex flex-col items-center">
+                    <img src="img/diversion.png" alt="Diversion" class="w-10 h-10 mb-2">
+                    Diversion
+                </div>
+                <div class="card flex flex-col items-center">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg"
+                        alt="Firebase" class="w-10 h-10 mb-2">
+                    Firebase
+                </div>
+            </div>
+
+            <h3 class="text-3xl font-bold my-6">Languages</h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 text-[var(--accent)]">
+                <div class="card flex flex-col items-center">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg"
+                        alt="C++" class="w-10 h-10 mb-2">
+                    C / C++
+                </div>
+                <div class="card flex flex-col items-center">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg" alt="C#"
+                        class="w-10 h-10 mb-2">
+                    C#
+                </div>
+                <div class="card flex flex-col items-center">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg"
+                        alt="Python" class="w-10 h-10 mb-2">
+                    Python
+                </div>
+                <div class="card flex flex-col items-center">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg"
+                        alt="JavaScript" class="w-10 h-10 mb-2">
+                    JavaScript
+                </div>
+                <div class="card flex flex-col items-center">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg" alt="PHP"
+                        class="w-10 h-10 mb-2">
+                    PHP
+                </div>
+                <div class="card flex flex-col items-center">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="SQL"
+                        class="w-10 h-10 mb-2">
+                    SQL
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Projects -->
+    <section id="projects" class="py-20 px-6 bg-[var(--secondary)] fade-in">
+        <div class="max-w-5xl mx-auto">
+            <h3 class="text-3xl font-bold text-center mb-8">Projects</h3>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <a href="#" data-link="projects/pnwas" class="card block">
+                    <div class="flex flex-col mb-1">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-xl font-bold text-[var(--accent)]">PNWAS</h4>
+                            <div class="flex flex-wrap gap-2 justify-end">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/0/01/Google_Docs_logo_%282014-2020%29.svg"
+                                    alt="Google Docs" class="w-5 h-5" />
+                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg"
+                                    alt="Python" class="w-5 h-5" />
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-400">A modular gaming framework for expansive open-world storylines. Built for
+                        immersion, designed for scale.</p>
+                </a>
+                <a href="#" data-link="projects/defenders-domain" class="card block">
+                    <div class="flex flex-col mb-1">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-xl font-bold text-[var(--accent)]">Defender's Domain</h4>
+                            <div class="flex flex-wrap gap-2 justify-end">
+                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg"
+                                    alt="C++" class="w-5 h-5" />
+                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg"
+                                    alt="Git" class="w-5 h-5" />
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-400">A CLI Based Tower Defense Game Written purely in C++.</p>
+                </a>
+                <a href="#" data-link="projects/my-dads-a-hero" class="card block">
+                    <div class="flex flex-col mb-1">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-xl font-bold text-[var(--accent)]">My Dad's a Hero: Armageddon</h4>
+                            <div class="flex flex-wrap gap-2 justify-end">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/0/01/Google_Docs_logo_%282014-2020%29.svg"
+                                    alt="Google Docs" class="w-5 h-5" />
+                                <img src="img/miro.jpeg" alt="Miro" class="w-5 h-5">
+                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/photoshop/photoshop-original.svg"
+                                    alt="Adobe Photoshop" class="w-5 h-5">
+                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/unrealengine/unrealengine-original.svg"
+                                    alt="Unreal Engine" class="w-5 h-5 dark:invert">
+                                <img src="img/diversion.png" alt="Diversion" class="w-5 h-5">
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-400">A Linear Story driven open world game using PNWAS system as backend.</p>
+                </a>
+                <a class="card block">
+                    <div class="flex flex-col mb-1">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-xl font-bold text-[var(--accent)]">Blood Light</h4>
+                            <div class="flex flex-wrap gap-2 justify-end">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/0/01/Google_Docs_logo_%282014-2020%29.svg"
+                                    alt="Google Docs" class="w-5 h-5" />
+                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/photoshop/photoshop-original.svg"
+                                    alt="Adobe Photoshop" class="w-5 h-5">
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-400">6v6 Multiplayer Shooter with strength and weakness of a vampire. Fighting
+                        each other for the light source over different arena's.</p>
+
+                    <div class="flex gap-2 mt-2">
+                        <button class="btn-download"
+                            onclick="window.location.href='pdf/BloodLight-ConceptDocument.pdf'">Download CD</button>
+                        <button href="#" data-link="projects/bloodlight" class="btn-view">View GDD</button>
+                    </div>
+                </a>
+
+                <a class="card block">
+                    <div class="flex flex-col mb-1">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-xl font-bold text-[var(--accent)]">AHole</h4>
+                            <div class="flex flex-wrap gap-2 justify-end">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/0/01/Google_Docs_logo_%282014-2020%29.svg"
+                                    alt="Google Docs" class="w-5 h-5" />
+                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/unity/unity-original.svg"
+                                    alt="Unity" class="w-5 h-5">
+                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg"
+                                    alt="Git" class="w-5 h-5">
+                                <img src="img/diversion.png" alt="Diversion" class="w-5 h-5">
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-400">A multi-layered puzzle-platformer that gradually removes your feelings as
+                        you progress. Every challenge is a revelation, and every level is a story.</p>
+
+                    <div class="flex gap-2 mt-2">
+                        <button href="#" data-link="projects/ahole" class="btn-download">View Game</button>
+                        <button href="#" data-link="projects/ahole-gdd" class="btn-view">View GDD</button>
+                    </div>
+                </a>
+                <a href="#" data-link="projects/playboy-sins-of-the-city" class="card block">
+                    <div class="flex items-center justify-between mb-1">
+                        <h4 class="text-xl font-bold text-[var(--accent)]">Playboy: Sins of the City</h4>
+                        <div class="flex flex-wrap gap-2 justify-end">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/0/01/Google_Docs_logo_%282014-2020%29.svg"
+                                alt="Google Docs" class="w-5 h-5" />
+                        </div>
+                    </div>
+                    <p class="text-gray-400">A seductive, morally grey tale where your choices echo in a city full of
+                        secrets, lust, and lies. Story-rich and provocatively real.</p>
+                </a>
+                <a href="#" data-link="projects/merry-christmas" class="card block">
+                    <div class="flex items-center justify-between mb-1">
+                        <h4 class="text-xl font-bold text-[var(--accent)]">Merry Christmas</h4>
+                    </div>
+                    <p class="text-gray-400">A dark and twisted linear horror game soaked in dread, where brutal
+                        murders, cold clues, and psychological suspense haunt every snowy step. Not every holiday ends
+                        in joy.</p>
+                </a>
+                <a href="#" data-link="projects/level-designs" class="card block">
+                    <div class="flex flex-col mb-1">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-xl font-bold text-[var(--accent)]">Level Designs/Greyboxing</h4>
+                            <div class="flex flex-wrap gap-2 justify-end">
+                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/unrealengine/unrealengine-original.svg"
+                                    alt="Unreal Engine" class="w-5 h-5 dark:invert" />
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- GitHub -->
+    <section id="github" class="py-20 px-6 text-center fade-in">
+        <h3 class="text-3xl font-bold mb-4">GitHub & Codebase</h3>
+        <p class="text-gray-400 mb-6">I share, I learn, I build in the open.</p>
+        <a href="https://github.com/JayanshDevgan" target="_blank"
+            class="bg-[var(--accent)] text-white px-6 py-2 rounded hover:opacity-80">Visit GitHub</a>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="py-20 px-6 text-center bg-[var(--secondary)] fade-in">
+        <h3 class="text-3xl font-bold mb-4">Let’s Connect</h3>
+        <p class="text-gray-400 mb-4">You love design. I love emotion. Let’s build something hauntingly beautiful.</p>
+        <a href="https://mail.google.com/mail/u/0/#inbox" class="text-[var(--accent)]" id="mailid"
+            target="_blank">jayanshdevgan123@email.com</a><br>
+        <a href="https://www.linkedin.com/in/wisk-w-wisker-274b45290/" class="text-[var(--accent)]"
+            target="_blank">https://www.linkedin.com/in/wisk-w-wisker-274b45290/</a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center py-6 text-sm text-gray-500 bg-[var(--bg)]">
+        &copy; 2025 Jayansh Devgan — Duality of a Designer. Logic & Love.
+    </footer>
+</body>
+
+</html>
